@@ -60,14 +60,14 @@ let print_calc x = printf "%s\n%!" (string_of_calc x)
 let eval_expr env e = 
   let rec eval env = function
   | Num i     -> i
-  | Var v     -> List.assoc v env
+  | Var v     -> (try List.assoc v env with Not_found -> failwith "Unknown variable!")
   | BinOp (op, x, y) ->
     match op with
     | '+' -> (eval env x) + (eval env y)
     | '-' -> (eval env x) - (eval env y)
     | '*' -> (eval env x) * (eval env y)
     | '/' -> (eval env x) / (eval env y)
-    | _ -> failwith "Unknown operation!"
+    | _   -> failwith "Unknown operation!"
   in eval env e
 
 (* Вычисление "значения" списка присваиваний.
@@ -88,27 +88,34 @@ let eval_calc (s, e) = eval_expr (eval_assigns s) e
 
 (* основная функция, несколько примеров *)
 let _ =
-
   let e0 = Num 1 in  
   let e1 = Var 'c' in
   let e2 = BinOp ('-', BinOp ('+', Num 123, Var 'x'),Num 23) in
-  (*
+ 
+  printf "%s" "e0: ";
   print_expr e0;
+  printf "%s" "e1: ";
   print_expr e1;
+  printf "%s" "e2: ";
   print_expr e2;
-  *)
+  printf "\n";	  
+
   let s0 = Assign ('x', e0) in
   let s1 = Assign ('c', (BinOp ('*', Num 2, Num 1))) in
   let s2 = Assign ('y', e1) in
   let s3 = Seq (s0, (Seq (s1, Seq (s2, Assign ('z', e2))))) in
-  (*
+  
   printf "\n";
-  print_assigns s0; printf "\n";
-  print_assigns s1; printf "\n";
-  print_assigns s2; printf "\n";
-  print_assigns s3; printf "\n";
-  *)
-
+  printf "%s" "s0: ";
+  print_assigns s0; 
+  printf "%s" "s1: ";
+  print_assigns s1; 
+  printf "%s" "s2: ";
+  print_assigns s2; 
+  printf "%s" "s3: \n";
+  print_assigns s3; 
+  printf "\n";
+   
   let c0 = s3, (BinOp ('/', e2, BinOp ('+', e1, Var 'y'))) in 
 
   print_calc c0 ;
