@@ -27,7 +27,7 @@ let string_of_expr x =
   | Var c     -> sprintf "%c" c
   | BinOp (op, x, y) ->
     match op with 
-    (* Comment on using parentheses *)
+    (* берем в скобочки для наглядности очередности операций *)
     | '+' -> sprintf "(%s) + (%s)" (print x) (print y)
     | '-' -> sprintf "(%s) - (%s)" (print x) (print y)
     | '*' -> sprintf "(%s) * (%s)" (print x) (print y)
