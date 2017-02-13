@@ -27,6 +27,7 @@ let string_of_expr x =
   | Var c     -> sprintf "%c" c
   | BinOp (op, x, y) ->
     match op with 
+    (* Comment on using parentheses *)
     | '+' -> sprintf "(%s) + (%s)" (print x) (print y)
     | '-' -> sprintf "(%s) - (%s)" (print x) (print y)
     | '*' -> sprintf "(%s) * (%s)" (print x) (print y)
@@ -88,10 +89,11 @@ let eval_calc (s, e) = eval_expr (eval_assigns s) e
 
 (* основная функция, несколько примеров *)
 let _ =
+  printf "%s\n" "TEST 0: ";
   let e0 = Num 1 in  
   let e1 = Var 'c' in
   let e2 = BinOp ('-', BinOp ('+', Num 123, Var 'x'),Num 23) in
- 
+(*
   printf "%s" "e0: ";
   print_expr e0;
   printf "%s" "e1: ";
@@ -99,13 +101,13 @@ let _ =
   printf "%s" "e2: ";
   print_expr e2;
   printf "\n";	  
-
+*)
   let s0 = Assign ('x', e0) in
   let s1 = Assign ('c', (BinOp ('*', Num 2, Num 1))) in
   let s2 = Assign ('y', e1) in
   let s3 = Seq (s0, (Seq (s1, Seq (s2, Assign ('z', e2))))) in
   
-  printf "\n";
+(*  printf "\n";
   printf "%s" "s0: ";
   print_assigns s0; 
   printf "%s" "s1: ";
@@ -115,9 +117,36 @@ let _ =
   printf "%s" "s3: \n";
   print_assigns s3; 
   printf "\n";
+*)
    
   let c0 = s3, (BinOp ('/', e2, BinOp ('+', e1, Var 'y'))) in 
-
   print_calc c0 ;
-  
-  printf "\n%d\n%!" (eval_calc c0);
+  printf "\nAnswer: %d\n%!" (eval_calc c0);
+  printf "\n";
+  (*---------------------------------------------------------------------------------*)
+  printf "%s\n" "TEST 1: ";
+  let e3 = Var 'x' in 
+  let s00 = Assign ('x', e0) in (* x := 1 -> x = 1*)
+  let s01 = Assign ('y', e3) in (* y := x -> y = 1 *) 
+  let s02 = Assign ('x', (BinOp ('*', Var 'x', Num 2))) in (* x:= x*2 -> x = 2 *)
+  let s03 = Seq (s00, (Seq (s01, Seq (s02, Assign ('y', (BinOp ('-', e3, Num 5))))))) in 
+(*
+  printf "%s" "s00: ";
+  print_assigns s00;  
+  printf "%s" "s01: ";
+  print_assigns s01;
+  printf "%s" "s02: ";
+  print_assigns s02;
+  printf "%s" "s03: ";
+  print_assigns s03;
+*) 
+  let c1 = s03, (BinOp ('-', BinOp ('-', Num 0, e3), Var 'y')) in 
+  print_calc c1;
+  printf "\nAnswer: %d\n%!" (eval_calc c1);
+  printf "\n";
+  (*---------------------------------------------------------------------------------*)
+  printf "%s\n" "TEST 2: ";
+  let s04 = Seq (s00, (Seq (s01, Seq (s02, Assign ('y', (BinOp ('-', e3, Num 5))))))) in
+  let c2 = s04, (BinOp ('-', BinOp ('-', Num 0, e3), Var 'F')) in 
+  print_calc c2;
+  printf "\nAnswer: %d\n%!" (eval_calc c2);

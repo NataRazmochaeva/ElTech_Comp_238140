@@ -1,0 +1,27 @@
+﻿osboxes@osboxes:~/labs$ ocaml calc_upd.ml -o calc
+TEST 0: 
+x := 1;
+c := (2) * (1);
+y := c;
+z := ((123) + (x)) - (23);
+(((123) + (x)) - (23)) / ((c) + (y))
+
+Answer: 25
+
+TEST 1: 
+x := 1;
+y := x;
+x := (x) * (2);
+y := (x) - (5);
+((0) - (x)) - (y)
+
+Answer: 1
+
+TEST 2: 
+x := 1;
+y := x;
+x := (x) * (2);
+y := (x) - (5);
+((0) - (x)) - (F)
+Exception: Failure "Unknown variable!".
+osboxes@osboxes:~/labs$ 
