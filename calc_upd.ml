@@ -89,6 +89,7 @@ let eval_calc (s, e) = eval_expr (eval_assigns s) e
 
 (* основная функция, несколько примеров *)
 let _ =
+  (* простой тест на работоспособность *)
   printf "%s\n" "TEST 0: ";
   let e0 = Num 1 in  
   let e1 = Var 'c' in
@@ -124,12 +125,14 @@ let _ =
   printf "\nAnswer: %d\n%!" (eval_calc c0);
   printf "\n";
   (*---------------------------------------------------------------------------------*)
+  (* тест для проверки того, что переменная переопределяется *)
   printf "%s\n" "TEST 1: ";
   let e3 = Var 'x' in 
-  let s00 = Assign ('x', e0) in (* x := 1 -> x = 1*)
-  let s01 = Assign ('y', e3) in (* y := x -> y = 1 *) 
-  let s02 = Assign ('x', (BinOp ('*', Var 'x', Num 2))) in (* x:= x*2 -> x = 2 *)
-  let s03 = Seq (s00, (Seq (s01, Seq (s02, Assign ('y', (BinOp ('-', e3, Num 5))))))) in 
+  let s00 = Assign ('x', e0) (* x := 1 => x = 1*) in
+  let s01 = Assign ('y', e3) (* y := x => y = 1 *) in  
+  let s02 = Assign ('x', (BinOp ('*', Var 'x', Num 2))) (* x:= x * 2 => x = 2 *) in 
+  let s03 = Assign ('y', (BinOp ('-', e3, Num 5)))  (* y := x - 5 => y = -3 *) in
+  let s04 = Seq (s00, (Seq (s01, Seq (s02, s03)))) in 
 (*
   printf "%s" "s00: ";
   print_assigns s00;  
@@ -140,11 +143,12 @@ let _ =
   printf "%s" "s03: ";
   print_assigns s03;
 *) 
-  let c1 = s03, (BinOp ('-', BinOp ('-', Num 0, e3), Var 'y')) in 
+  let c1 = s04, (BinOp ('-', BinOp ('-', Num 0, e3), Var 'y')) (* 0 - x - y *) in 
   print_calc c1;
   printf "\nAnswer: %d\n%!" (eval_calc c1);
   printf "\n";
   (*---------------------------------------------------------------------------------*)
+  (* тест для проверки обработки неопределенной переменной *)
   printf "%s\n" "TEST 2: ";
   let s04 = Seq (s00, (Seq (s01, Seq (s02, Assign ('y', (BinOp ('-', e3, Num 5))))))) in
   let c2 = s04, (BinOp ('-', BinOp ('-', Num 0, e3), Var 'F')) in 
